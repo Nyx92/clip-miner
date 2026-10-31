@@ -1,0 +1,12 @@
+numpy
+openpyxl
+python-dotenv
+rapidocr
+# GPU OCR (NVIDIA). On a machine without an NVIDIA GPU, replace these lines with: onnxruntime
+onnxruntime-gpu
+nvidia-cudnn-cu12
+nvidia-cublas-cu12
+nvidia-cuda-runtime-cu12
+nvidia-cufft-cu12
+nvidia-curand-cu12
+pytest
