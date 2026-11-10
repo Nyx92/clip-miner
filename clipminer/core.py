@@ -75,5 +75,11 @@ def parse_ts(s: str) -> float:
     return total
 
 
+def clip_window(start: float, end: float, length: float, duration: float) -> tuple[float, float]:
+    """A window of exactly `length` seconds, centred on the moment, inside the video."""
+    s = max(0.0, min((start + end - length) / 2, duration - length))
+    return s, min(s + length, duration)
+
+
 def text_between(cues: list[Cue], start: float, end: float) -> str:
     return "\n".join(t for s, e, t in cues if e > start and s < end)

@@ -18,8 +18,8 @@ Find the KEY MOMENTS: the scenes a fan would clip and share. Categories:
 # Rules
 
 - Choose quality over quantity: about 8 to 15 moments for a one-hour episode. Skip filler.
-- `start` and `end` cover the whole scene, so the clip makes sense alone: include the setup line
-  before the key line and the reaction after it. A typical moment is 30 to 120 seconds.
+- `start` and `end` cover the scene, so the clip makes sense alone: include the setup line
+  before the key line and the reaction after it. Keep it close to the clip length below.
 - Use only times that appear in the transcript, format `HH:MM:SS`.
 - `title`: a short headline, max 10 words.
 - `reason`: 1 to 2 sentences. Say who did what and why it matters in the game.

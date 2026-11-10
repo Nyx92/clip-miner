@@ -30,10 +30,13 @@ SCHEMA = {
 
 
 def find_moments(cues: list[Cue], show: str, season: int, episode: int,
-                 prompt_file: Path, claude_bin: str, model: str) -> tuple[list[dict], dict]:
+                 prompt_file: Path, claude_bin: str, model: str,
+                 length: float) -> tuple[list[dict], dict]:
     timeline = "\n".join(f"[{fmt_ts(s)}] {t}" for s, _, t in cues)
     stdin = (
         f"{prompt_file.read_text(encoding='utf-8')}\n\n"
+        f"# Clip length\nEvery clip is cut to exactly {length:g} seconds around the middle of the moment. "
+        f"Choose moments whose key part fits in {length:g} seconds.\n\n"
         f"# Episode\nShow: {show}\nSeason: {season}\nEpisode: {episode}\n\n"
         f"# Transcript\n{timeline}\n"
     )
