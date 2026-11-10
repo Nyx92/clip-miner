@@ -47,8 +47,9 @@ def test_text_between():
 
 
 def test_clip_window():
-    assert clip_window(100, 140, 60, 3600) == (90, 150)    # short moment: grows around the middle
-    assert clip_window(100, 300, 60, 3600) == (170, 230)   # long moment: middle part
-    assert clip_window(5, 15, 60, 3600) == (0, 60)         # never before the video starts
-    assert clip_window(3580, 3595, 60, 3600) == (3540, 3600)  # never after the video ends
-    assert clip_window(10, 20, 60, 40) == (0, 40)          # video shorter than a clip
+    assert clip_window(100, 140, 30, 90, 3600) == (100, 140)    # inside the range: kept as is
+    assert clip_window(100, 110, 30, 90, 3600) == (90, 120)     # short moment: grows around the middle
+    assert clip_window(100, 300, 30, 90, 3600) == (155, 245)    # long moment: middle part
+    assert clip_window(5, 15, 60, 60, 3600) == (0, 60)          # never before the video starts
+    assert clip_window(3580, 3595, 60, 60, 3600) == (3540, 3600)  # never after the video ends
+    assert clip_window(10, 20, 60, 60, 40) == (0, 40)           # video shorter than a clip

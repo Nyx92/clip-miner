@@ -45,7 +45,7 @@ Only the key-moment step uses an LLM. Everything else runs locally and costs not
 |---|---|
 | `INPUT_DIR` | Folder with the episodes |
 | `OUTPUT_DIR` | Folder for clips, `key_moments.xlsx` and the cache |
-| `CLIP_LENGTH_SEC` | Length of every clip, in seconds (for example `60`). Each clip is centred on its moment |
+| `CLIP_MIN_SEC`, `CLIP_MAX_SEC` | Shortest and longest clip, in seconds. A shorter moment is extended and a longer one is trimmed, around its middle. Set both to the same value for clips of one fixed length |
 | `USE_SRT` | `1` = use a `.srt` next to the video when there is one. `0` = always OCR |
 | `OCR_FPS` | OCR samples per second |
 | `OCR_USE_CUDA` | `1` = OCR on the NVIDIA GPU. `0` = CPU |
@@ -71,7 +71,7 @@ and `USE_SRT=1`, it replaces OCR.
 | `key_moments.xlsx` | One row per moment: Show, Season, Episode, Start, End, Category, Title, Transcript, Reason, Confidence, Clip |
 | `clips/<Show>/S01E08/*.mp4` | One clip per moment |
 | `work/<video>/transcript.srt` | Cached transcript (from OCR or the .srt) |
-| `work/<video>/moments_<length>s.json` | Cached Claude answer, one per clip length |
+| `work/<video>/moments_<min>-<max>s.json` | Cached Claude answer, one per clip length range |
 
 The batch can stop and restart at any time. An episode already in the Excel file is skipped.
 The caches mean a rerun never repeats OCR or a Claude call.
@@ -80,9 +80,9 @@ or only `moments_*.json` for a fresh Claude answer.
 
 ## Tune the results
 
-Edit `prompt.md` to change the categories or how many moments. Change `CLIP_LENGTH_SEC` for a different clip length.
+Edit `prompt.md` to change the categories or how many moments. Change `CLIP_MIN_SEC` and `CLIP_MAX_SEC` for different clip lengths.
 After a prompt change, delete `moments_*.json` of an episode and run again.
-A new clip length gets a new Claude answer automatically, because Claude chooses moments that fit the length.
+A new clip length range gets a new Claude answer automatically, because Claude chooses moments that fit the range.
 
 ## Cost
 

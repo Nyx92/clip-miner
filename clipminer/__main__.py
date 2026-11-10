@@ -82,9 +82,9 @@ def main():
     use_srt = env("USE_SRT", "1") == "1"
     fps = float(env("OCR_FPS", "2"))
     use_cuda = env("OCR_USE_CUDA", "1") == "1"
-    length = float(env("CLIP_LENGTH_SEC", "60"))
-    if not (math.isfinite(length) and length > 0):
-        sys.exit("CLIP_LENGTH_SEC must be more than 0.")
+    lo, hi = float(env("CLIP_MIN_SEC", "30")), float(env("CLIP_MAX_SEC", "120"))
+    if not (math.isfinite(hi) and 0 < lo <= hi):
+        sys.exit("CLIP_MIN_SEC must be more than 0 and not more than CLIP_MAX_SEC.")
     model = env("CLAUDE_MODEL", "sonnet")
     claude_bin = env("CLAUDE_BIN", "claude")
     prompt_file = Path(env("PROMPT_FILE", str(Path(__file__).resolve().parent.parent / "prompt.md")))
@@ -111,13 +111,13 @@ def main():
         cues = get_cues(video, work, use_srt, fps, use_cuda)
         print(f"    {len(cues)} subtitle cues")
 
-        # Claude picks moments for one clip length, so each length has its own cache
-        cache = work / f"moments_{length:g}s.json"
+        # Claude picks moments for one clip length range, so each range has its own cache
+        cache = work / f"moments_{lo:g}-{hi:g}s.json"
         if cache.exists():
             moments = json.loads(cache.read_text(encoding="utf-8"))
         else:
             print(f"    asking Claude ({model})...")
-            moments, stats = find_moments(cues, show, season, episode, prompt_file, claude_bin, model, length)
+            moments, stats = find_moments(cues, show, season, episode, prompt_file, claude_bin, model, lo, hi)
             print(f"    {len(moments)} moments, {stats['input_tokens']} tokens in, "
                   f"{stats['output_tokens']} out, {stats['seconds']} s")
             cache.write_text(json.dumps(moments, indent=2, ensure_ascii=False), encoding="utf-8")
@@ -129,9 +129,9 @@ def main():
             if end <= start:
                 print(f"    skip moment {n}: end {m['end']} is not after start {m['start']}")
                 continue
-            start, end = clip_window(start, end, length, duration)
-            # length in the name: a new CLIP_LENGTH_SEC never reuses an old clip
-            clip = clip_dir / f"{n:02}_{slug(m['category'])}_{fmt_ts(start).replace(':', '')}_{length:g}s.mp4"
+            start, end = clip_window(start, end, lo, hi, duration)
+            # start and length in the name: a different window never reuses an old clip
+            clip = clip_dir / f"{n:02}_{slug(m['category'])}_{fmt_ts(start).replace(':', '')}_{end - start:.0f}s.mp4"
             if not clip.exists():
                 cut_clip(video, start, end, clip)
             ws.append([show, season, episode, fmt_ts(start), fmt_ts(end), m["category"], m["title"],

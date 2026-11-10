@@ -75,8 +75,9 @@ def parse_ts(s: str) -> float:
     return total
 
 
-def clip_window(start: float, end: float, length: float, duration: float) -> tuple[float, float]:
-    """A window of exactly `length` seconds, centred on the moment, inside the video."""
+def clip_window(start: float, end: float, lo: float, hi: float, duration: float) -> tuple[float, float]:
+    """The moment stretched or trimmed around its middle to lo..hi seconds, inside the video."""
+    length = min(max(end - start, lo), hi)
     s = max(0.0, min((start + end - length) / 2, duration - length))
     return s, min(s + length, duration)
 
